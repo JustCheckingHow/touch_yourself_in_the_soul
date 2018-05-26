@@ -63,3 +63,7 @@ class UCB_Assessment:
                                                                          "ucb": self.update_ucb(turn, 0, 1)}
             else:
                 pass
+
+if __name__ == "__main__":
+    
+    run_algorithm()
