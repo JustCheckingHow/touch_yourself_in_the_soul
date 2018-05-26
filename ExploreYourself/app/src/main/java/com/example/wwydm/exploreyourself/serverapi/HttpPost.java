@@ -33,7 +33,7 @@ public class HttpPost implements Runnable {
     {
         try{
             url = new URL("http://"
-                    + "192.168.7.132"
+                    + "192.168.43.144"
                     + ":"
                     + "80");
 //                     + //Globals.getServerApiDestination());
@@ -90,7 +90,6 @@ public class HttpPost implements Runnable {
             String line;
             while ((line = rd.readLine()) != null) {
                 response.append(line);
-                response.append('\r');
             }
             rd.close();
         } catch(Exception ex)

@@ -36,17 +36,12 @@ public class HttpGet implements Runnable {
     {
         try{
             url = new URL("http://"
-                    + "192.168.7.132"
+                    + "192.168.43.144"
                     + ":"
                     + "80?" + this.message);
 //                     + //Globals.getServerApiDestination());
         }catch(MalformedURLException ex) {
             Log.e("Http:", "new URL:", ex);
-        }
-        try{
-            urlParameters = "" + URLEncoder.encode(message, "UTF-8");
-        }catch(UnsupportedEncodingException ex){
-            Log.e("Http:", "urlParams", ex);
         }
 
         try{
@@ -58,31 +53,9 @@ public class HttpGet implements Runnable {
         try{
             connection.setRequestMethod("GET");
 //            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
-            connection.setRequestProperty("Content-Language", "en-US");
-            connection.setDoOutput(true);
-            connection.setUseCaches(false);
-            connection.setDoOutput(true);
         }catch(Exception ex)
         {
             Log.e("Http", "connectionSetup", ex);
-        }
-
-        //Send request
-        try{
-            DataOutputStream wr = new DataOutputStream (connection.getOutputStream());
-            wr.writeBytes(urlParameters);
-            wr.close();
-        }
-        catch(ConnectException ce)
-        {
-            Log.d("HTTP", "Connection error - can't connect to address:" + url.toString());
-            //TODO show widget with connection error.
-            return;
-        }
-        catch(Exception ex)
-        {
-            Log.e("Http", "sendRequest", ex);
         }
 
         //Get Response

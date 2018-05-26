@@ -50,16 +50,10 @@ public class ServerApi {
 
     }
 
-    private String get(String par) {
-        StringBuilder result = new StringBuilder();
-
+    private void get(String par) {
         try {
             new Thread(new HttpGet(par, listener)).start();
-        } catch (Exception e) {
-
-            return "";
-        }
-        return result.toString();
+        } catch (Exception e) { }
     }
 }
 
