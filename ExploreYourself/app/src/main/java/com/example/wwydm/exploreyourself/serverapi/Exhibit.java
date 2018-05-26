@@ -9,14 +9,20 @@ public class Exhibit {
     private Choice choice;
 
     public enum Choice {
+        NONE,
         LIKE,
-        DISLIKE,
-        NONE
+        DISLIKE
     }
 
     public Exhibit(String exhibitId) {
 
-        exId = exhibitId;
+        this.exId = exhibitId;
+    }
+
+    public Exhibit(String exhibitId, Choice userChoice) {
+
+        this.exId = exhibitId;
+        this.choice = userChoice;
     }
 
     public void setChoice(Choice choice) {
