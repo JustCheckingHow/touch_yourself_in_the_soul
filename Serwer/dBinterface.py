@@ -83,7 +83,13 @@ class Unpickler:
                     conn.commit()
         conn.close()
 
+    def clearOrphanedExhibits(self):
+        conn = connect(_DATABASE_)
+        conn.execute("delete from Objects where id not in ( select distinct objectId from subjects)")
+        conn.commit()
+
 # u = Unpickler()
 # u.loadObjectsTable()
 # u.loadTypesTable()
 # u.loadSubjectsTable()
+u.clearOrphanedExhibits()
