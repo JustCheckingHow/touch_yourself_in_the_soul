@@ -5,8 +5,7 @@ import pickle
 
 _DATABASE_ = "baza1.db"
 
-with open("subjects.txt", "r") as f:
-    filters = f.readlines()
+
 
 class DBInterface:
 
@@ -25,7 +24,11 @@ class DBInterface:
 
 class Unpickler:
     def __init__(self):
-        data = pickle.load(open("data.pickle", "rb"))
+        self.data = pickle.load(open("data.pickle", "rb"))
+        with open("subjects.txt", "r") as f:
+            self.filters = f.readlines()
+        self.filters = [x.strip() for x in self.filters]
+        print(self.filters)
 
     def loadObjectsTable(self):
         conn = connect(_DATABASE_)
@@ -48,7 +51,9 @@ class Unpickler:
                 if "date" in el:
                     date = el[1]
                 if "identifier" in el:
-                    identifier = el[1]
+                    if el[1].find("."):
+                        el[1]+="(p)"
+                    identifier = el[1].lower().replace(".", "").replace("/", "_").replace(" ", "")
 
             conn.execute("INSERT INTO Objects (id, title, creator, description, format, 'date', identifier) VALUES (?, ?, ?, ?, ?, ?, ?)", (39000 + i, title, creator, description, form, date, identifier))
             conn.commit()
@@ -60,7 +65,7 @@ class Unpickler:
             for el in e:
                 if ("subject" in el and "(" not in el[1] and "-" not in el[1] and "." not in el[1]): #type
                     temp = str(el[1])
-                    if temp in filters:
+                    if temp in self.filters:
                         conn.execute("INSERT INTO subjects (objectId, subject) VALUES (?, ?)", (39000 +i, temp))
                         conn.commit()
 
@@ -75,3 +80,8 @@ class Unpickler:
                     conn.execute("INSERT INTO types (objectId, type) VALUES (?, ?)", (39000 + i, temp))
                     conn.commit()
         conn.close()
+
+u = Unpickler()
+u.loadObjectsTable()
+# u.loadTypesTable()
+# u.loadSubjectsTable()
