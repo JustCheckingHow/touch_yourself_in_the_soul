@@ -34,7 +34,11 @@ public class Exhibit {
         this.choice = choice;
     }
 
-    public void getImageUrl(){
+    public String getImageUrl(){
+        return this.imgUrl;
+    }
+
+    public void setImgUrl(){
         this.imgUrl = predefined_URL + this.exId + ".jpg";
     }
 

@@ -34,6 +34,8 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     ServerApi sa;
     AlertDialog.Builder builder;
 
+    Vector<Exhibit> toShow;
+
 
     static final int batchMaxCounter = 20;
     @Override
@@ -59,13 +61,15 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
 
         sa = new ServerApi("http://192.168.0.201:80", this);
         sa.getExhibitsToShow(batchMaxCounter);
+
         batchCounter = 0;
         batchAssessment = new Vector<>(batchMaxCounter);
 
         random = new Random();
         iv_MainPhoto = findViewById(R.id.iv_MainPhoto);
-        currentID =  random.nextInt(23000);
-        new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
+        currentID =  0;
+//        new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
+        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     public void onFabClick(View v){
@@ -138,6 +142,10 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     public void onGotExhibitsToShow(Vector<Exhibit> exhibits) {
 
         // TODO show got exhibits
+        for (int i = 0; i < exhibits.size(); i++) {
+            exhibits.get(i).setImgUrl();
+    }
+//        toShow = exhibits;
     }
 
     private class BitmapDownloader extends AsyncTask {
