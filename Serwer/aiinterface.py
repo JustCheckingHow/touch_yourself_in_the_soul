@@ -18,5 +18,5 @@ class TestAiInterface(AIInterface):
 		return (123, 4556, 7890)
 
 	def onExhibitsRates(self, rates):
-		pass
+		print(rates)
 	

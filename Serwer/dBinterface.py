@@ -3,6 +3,20 @@ import pickle
 
 data = pickle.load(open("data.pickle", "rb"))
 
+class DBInterface:
+
+    def __init__(self):
+        pass
+      
+    def getSubject(self, id):
+        return ["subject"]
+        
+    def getObject(self, id):
+        return ["object"]
+        
+    def getType(self, id):
+        return ["type"]
+
 class Unpickler:
     def loadObjectsTable(self):
         conn = connect('baza1.db')
