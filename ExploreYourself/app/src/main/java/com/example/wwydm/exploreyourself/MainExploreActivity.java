@@ -2,12 +2,16 @@ package com.example.wwydm.exploreyourself;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,6 +39,8 @@ public class MainExploreActivity extends AppCompatActivity {
     Vector<Exhibit> batchAssessment;
     private int currentID;
     ServerApi sa;
+    AlertDialog.Builder builder;
+
 
     static final int batchMaxCounter = 3;
     @Override
@@ -50,6 +56,12 @@ public class MainExploreActivity extends AppCompatActivity {
                     2);
         }
 
+        FloatingActionButton myFab = findViewById(R.id.fab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onFabClick(v);
+            }
+        });
         sa = new ServerApi("http://192.168.0.201:80");
         batchCounter = 0;
         batchAssessment = new Vector<>(batchMaxCounter);
@@ -60,6 +72,15 @@ public class MainExploreActivity extends AppCompatActivity {
         new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
     }
 
+    public void onFabClick(View v){
+        String query = "Jacek_Malczewski";
+        builder = new AlertDialog.Builder(MainExploreActivity.this,
+                android.R.style.Theme_Material_Dialog_Alert);
+        builder.setTitle("Artwork info: " + query)
+                .setIcon(android.R.drawable.ic_menu_compass)
+                .setCancelable(true);
+        new JsonParser().execute(query, builder);
+    }
     public void onButtonLike(View v) {
         batchGuard(Exhibit.Choice.LIKE);
         animateOut();

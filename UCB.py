@@ -6,7 +6,6 @@ repetitions = 10000
 
 MODE = 'multiple'
 # MODE = 'single'
-from dBinterface import
 
 
 class Generator:
