@@ -2,24 +2,17 @@ package com.example.wwydm.exploreyourself;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,7 +25,7 @@ import java.net.HttpURLConnection;
 import java.util.Random;
 import java.util.Vector;
 
-public class MainExploreActivity extends AppCompatActivity {
+public class MainExploreActivity extends AppCompatActivity implements ServerApi.ServerApiListener {
     ImageView iv_MainPhoto;
     Random random;
     private int batchCounter;
@@ -42,7 +35,7 @@ public class MainExploreActivity extends AppCompatActivity {
     AlertDialog.Builder builder;
 
 
-    static final int batchMaxCounter = 3;
+    static final int batchMaxCounter = 20;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,13 +49,16 @@ public class MainExploreActivity extends AppCompatActivity {
                     2);
         }
 
+
         FloatingActionButton myFab = findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onFabClick(v);
             }
         });
-        sa = new ServerApi("http://192.168.0.201:80");
+
+        sa = new ServerApi("http://192.168.0.201:80", this);
+        sa.getExhibitsToShow(batchMaxCounter);
         batchCounter = 0;
         batchAssessment = new Vector<>(batchMaxCounter);
 
@@ -136,6 +132,12 @@ public class MainExploreActivity extends AppCompatActivity {
             }
         });
         fadeIn.start();
+    }
+
+    @Override
+    public void onGotExhibitsToShow(Vector<Exhibit> exhibits) {
+
+        // TODO show got exhibits
     }
 
     private class BitmapDownloader extends AsyncTask {

@@ -8,34 +8,25 @@ import java.util.Vector;
 public class ServerApi {
     private String serverAddr;
 
-    public ServerApi(String serverAddress) {
+    public interface ServerApiListener {
+
+        void onGotExhibitsToShow(Vector<Exhibit> exhibits);
+    }
+    private ServerApiListener listener;
+
+    public ServerApi(String serverAddress, ServerApiListener listener) {
 
         serverAddr = serverAddress;
+        this.listener = listener;
     }
 
     /**
      * @param howManyExhibits number of requested pairs of photos
      * @return vector with pairs
      */
-    public Vector<Exhibit> getExhibitsToShow(int howManyExhibits) {
+    public void  getExhibitsToShow(int howManyExhibits) {
 
-        String response = get( "howMany=" + String.valueOf(howManyExhibits));
-        Vector<Exhibit> toReturn = new Vector<>();
-
-        try {
-            JSONObject jObject = new JSONObject(response);
-            JSONArray jArray = jObject.getJSONArray("exhibitsIds");
-
-            for (int i = 0; i < jArray.length(); i++) {
-
-                JSONObject o = jArray.getJSONObject(i);
-                toReturn.add(new Exhibit(o.getString("id")));
-            }
-            return toReturn;
-        } catch (Exception e) {
-
-            return toReturn;
-        }
+        get( "howMany=" + String.valueOf(howManyExhibits));
     }
 
     public void postExhibitsRates(Vector<Exhibit> exhibitsWithRates) {
@@ -59,25 +50,10 @@ public class ServerApi {
 
     }
 
-    private String get(String par) {
-        StringBuilder result = new StringBuilder();
-
+    private void get(String par) {
         try {
-            new Thread(new HttpGet(par)).start();
-//            URL url = new URL(serverAddr + "?" + par);
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("GET");
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            String line;
-//            while ((line = rd.readLine()) != null) {
-//                result.append(line);
-//            }
-//            rd.close();
-        } catch (Exception e) {
-
-            return "";
-        }
-        return result.toString();
+            new Thread(new HttpGet(par, listener)).start();
+        } catch (Exception e) { }
     }
 }
 
