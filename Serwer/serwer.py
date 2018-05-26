@@ -60,7 +60,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
             # Translate id to category
             style = db.getSubject(id)
             genre = db.getType(id)  
-            categoriesAndRates[id] = [style, genre, rateToNumber(rate)]
+            categoriesAndRates[id] = [style, genre, self.rateToNumber(rate)]
 
         interface.onExhibitsRates(categoriesAndRates)
 
