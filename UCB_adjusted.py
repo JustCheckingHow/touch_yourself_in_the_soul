@@ -1,10 +1,10 @@
 import numpy as np
 import math
+from Serwer.dBinterface import DBInterface
 
 
 class Category:
     def __init__(self):
-
         # initializes the dictionaries for each category e.g:
         # Category style:
         # impressionism : {"selection": 0, "hits": 0,  "ucb": 0} # zero is number of view and
@@ -65,5 +65,11 @@ class UCB_Assessment:
                 pass
 
 if __name__ == "__main__":
-    
-    run_algorithm()
+    db = DBInterface("Serwer/baza1.db")
+    # 39000 - 42000
+    for i in range(39000, 39010):
+        sublist = db.getSubject(i)
+        print(sublist)
+    cat_list = [""]
+    # ucb = UCB_Assessment(cats)
+    # ucb.run_assessment()

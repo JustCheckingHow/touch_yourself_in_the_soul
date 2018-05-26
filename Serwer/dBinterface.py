@@ -1,12 +1,15 @@
 from sqlite3 import *
 import pickle
 
-_DATABASE_ = "baza1.db"
 
 class DBInterface:
+    _DATABASE_ = "baza1.db"
 
-    def __init__(self):
-        self.conn = connect(_DATABASE_)
+    def __init__(self, database=None):
+        if database is None:
+            self.conn = connect(DBInterface._DATABASE_)
+        else:
+            self.conn = connect(database)
 
     def getSubject(self, id):
         cur = self.conn.execute("SELECT subject FROM subjects WHERE objectId = "+str(id)+"")
