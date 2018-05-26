@@ -13,15 +13,15 @@ class DBInterface:
 
     def getSubject(self, id):
         cur = self.conn.execute("SELECT subject FROM subjects WHERE objectId = "+str(id)+"")
-        return cur.fetchall()
+        return [i[0] for i in cur.fetchall()]
 
     def getObject(self, id):
         cur = self.conn.execute("SELECT title, creator, description, format, date, identifier FROM Objects WHERE id = "+str(id)+"")
-        return cur.fetchall()
+        return [i[0] for i in cur.fetchall()]
 
     def getType(self, id):
         cur = self.conn.execute("SELECT type FROM types WHERE objectId = "+str(id)+"")
-        return cur.fetchall()
+        return [i[0] for i in cur.fetchall()]
 
 class Unpickler:
     def __init__(self):
@@ -88,6 +88,8 @@ class Unpickler:
     def clearOrphanedExhibits(self):
         conn = connect(_DATABASE_)
         conn.execute("delete from Objects where id not in (select distinct objectId from subjects) or id not in (select distinct objectId from types)")
+        conn.execute("delete from subjects where objectId not in (select id from Objects)")
+        conn.execute("delete from types where objectId not in (select id from Objects)")
         conn.commit()
 
     def limitTypesTo(self, num):
@@ -110,22 +112,25 @@ class Unpickler:
         conn.commit()
 
 if __name__ == "__main__":
-    u = Unpickler()
-    u.purgeDataBase()
-    print('Purged database')
+    di = DBInterface()
+    print(di.getSubject(39024))
 
-    u.loadObjectsTable()
-    print('Loaded objects table')
+    # u = Unpickler()
+    # u.purgeDataBase()
+    # print('Purged database')
 
-    u.loadTypesTable()
-    print('Loaded types table')
+    # u.loadObjectsTable()
+    # print('Loaded objects table')
 
-    u.loadSubjectsTable()
-    print('Loaded subjects table')
+    # u.loadTypesTable()
+    # print('Loaded types table')
 
-    u.limitTypesTo(20)
-    u.limitSubjectsTo(20)
-    print('Limited categories')
+    # u.loadSubjectsTable()
+    # print('Loaded subjects table')
 
-    u.clearOrphanedExhibits()
-    print('Cleaned up DB')
+    # u.limitTypesTo(20)
+    # u.limitSubjectsTo(20)
+    # print('Limited categories')
+
+    # u.clearOrphanedExhibits()
+    # print('Cleaned up DB')
