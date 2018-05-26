@@ -2,6 +2,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from urllib import parse
 
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -9,6 +10,9 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         self.send_header('Content-type','text/html')
         self.end_headers()
+
+        parsed_path = parse.urlparse(self.path)
+        print(parsed_path.query)
 
         message = "Hello world!"
         self.wfile.write(bytes(message, "utf8"))
