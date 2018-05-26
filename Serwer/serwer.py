@@ -2,6 +2,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import urllib
 
 from aiinterface import TestAiInterface
 from dBinterface import DBInterface
@@ -11,9 +12,8 @@ interface = TestAiInterface()
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        self.send_response(200)
-
         print("do_GET")
+        self.send_response(200)
 
         self.send_header('Content-type','application/json')
         self.end_headers()
@@ -32,9 +32,8 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         return
 
     def do_POST(self):
-        self.send_response(200)
-
         print("do_POST")
+        self.send_response(200)
 
         self.send_header('Content-type','application/json')
         self.end_headers()
@@ -42,13 +41,14 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         # Make object connector
         db = DBInterface()
 
-        jsonString = self.rfile.read(int(self.headers['Content-Length']))
-
-        print("POST: " + str(jsonString))
+        jsonString = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
+        
+        print(type(jsonString))
+        print("POST: " + jsonString)
 
         ratesJson = json.loads(jsonString)
-        rates = ratesJson["exhibitsRates"]
-
+        rates = ratesJson["rates"]
+        print(rates)
         print("POST done json object")
 
         categoriesAndRates = {}
@@ -59,8 +59,8 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
             # Translate id to category
             style = db.getSubject(id)
-            genre = db.getType(id)
-            categoriesAndRates[id] = [style, type, rate]
+            genre = db.getType(id)  
+            categoriesAndRates[id] = [style, genre, self.rateToNumber(rate)]
 
         interface.onExhibitsRates(categoriesAndRates)
 
@@ -69,6 +69,14 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(bytes(message, "utf8"))"""
         return
+        
+    def rateToNumber(self, rate):
+        if rate == "NONE":
+            return 0
+        elif rate == "LIKE":
+            return 1
+        else:
+            return 2
 
 def run():
     print('starting server...')
