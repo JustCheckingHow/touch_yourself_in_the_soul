@@ -13,14 +13,16 @@ class DBInterface:
         self.conn = connect(_DATABASE_)
 
     def getSubject(self, id):
-        self.conn.execute("SELECT subject FROM subjects WHERE objectId = ?", id)
-        return ["subject"]
+        cur = self.conn.execute("SELECT subject FROM subjects WHERE objectId = "+str(id)+"")
+        return cur.fetchall()
 
     def getObject(self, id):
-        return ["object"]
+        cur = self.conn.execute("SELECT title, creator, description, format, date, identifier FROM Objects WHERE id = "+str(id)+"")
+        return cur.fetchall()
 
     def getType(self, id):
-        return ["type"]
+        cur = self.conn.execute("SELECT type FROM types WHERE objectId = "+str(id)+"")
+        return cur.fetchall()
 
 class Unpickler:
     def __init__(self):
@@ -81,7 +83,7 @@ class Unpickler:
                     conn.commit()
         conn.close()
 
-u = Unpickler()
-u.loadObjectsTable()
+# u = Unpickler()
+# u.loadObjectsTable()
 # u.loadTypesTable()
 # u.loadSubjectsTable()
