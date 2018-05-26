@@ -10,8 +10,8 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
     def __init__(self, *kwarg, aiInterface):
         BaseHTTPRequestHandler.__init__(self, kwarg)
-        self.aiInterface = aiInterface 
-	
+        self.aiInterface = aiInterface
+
     def do_GET(self):
         self.send_response(200)
 
@@ -21,7 +21,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         jsonIds = []
         for id in self.aiInterface.onExhibitsRequested(howMany):
             jsonIds.append({"id": id})
-		
+
         jsonMsg = {}
         jsonMsg["exhibitsIds"] = jsonIds
         jsonData = json.dump(jsonMsg)
@@ -33,24 +33,24 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         # Make object connector
         db = DBInterface()
-        
+
         jsonString = self.rfile.read(self.headers.getheader('content-length'))
         ratesJson = json.loads(jsonString)
         rates = ratesJson["exhibitsRates"]
-        
+
         categoriesAndRates = {}
-        
+
         for r in rates:
             id = r["id"]
             rate = r["rate"]
-            
+
             # Translate id to category
             style = db.getSubject(id)
             genre = db.getType(id)
-            categoriesAndRates[id] = [style, type, rate]
-        
+            categoriesAndRates[id] = [style, types, rate]
+
         self.aiInterface.onExhibitsRates(categoriesAndRates)
-        
+
         """self.send_header('Content-type','text/html')
         self.end_headers()
 
