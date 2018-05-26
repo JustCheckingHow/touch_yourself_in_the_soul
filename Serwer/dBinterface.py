@@ -54,8 +54,7 @@ class Unpickler:
                     identifier = el[1].lower().replace(".", "").replace("/", "_").replace(" ", "")
 
             conn.execute("INSERT INTO Objects (id, title, creator, description, format, 'date', identifier) VALUES (?, ?, ?, ?, ?, ?, ?)", (39000 + i, title, creator, description, form, date, identifier))
-            conn.commit()
-            print(f'\r {i+1}/{len(self.data)} ', end='')
+        conn.commit()
 
         conn.close()
 
@@ -66,7 +65,7 @@ class Unpickler:
                 if ("subject" in el and "(" not in el[1] and "-" not in el[1] and "." not in el[1]): #type
                     temp = str(el[1])
                     conn.execute("INSERT INTO subjects (objectId, subject) VALUES (?, ?)", (39000 +i, temp))
-                    conn.commit()
+            conn.commit()
             print(f'\r{i+1}/{len(self.data)} ', end='')
 
         conn.close()
@@ -78,7 +77,7 @@ class Unpickler:
                 if ("type" in el and "(" not in el[1] and "-" not in el[1] and "." not in el[1]): #type
                     temp = str(el[1])
                     conn.execute("INSERT INTO types (objectId, type) VALUES (?, ?)", (39000 + i, temp))
-                    conn.commit()
+            conn.commit()
             print(f'\r{i+1}/{len(self.data)} ', end='')
 
         conn.close()
@@ -89,13 +88,13 @@ class Unpickler:
         conn.commit()
 
     def limitTypesTo(self, num):
-        qry = "delete from types where id not in (select id from types group by type order by count(objectId) desc limit %i)" % num
+        qry = "delete from types where type not in (select type from types group by type order by count(objectId) desc limit %i)" % num
         conn = connect(_DATABASE_)
         conn.execute(qry)
         conn.commit()
 
     def limitSubjectsTo(self, num):
-        qry = "delete from subjects where id not in (select subject, count(objectId) from subjects group by subject order by count(objectId) desc limit %i)" % num
+        qry = "delete from subjects where subject not in (select subject from subjects group by subject order by count(objectId) desc limit %i)" % num
         conn = connect(_DATABASE_)
         conn.execute(qry)
         conn.commit()
@@ -107,22 +106,23 @@ class Unpickler:
         conn.execute("delete from types where 1=1")
         conn.commit()
 
-u = Unpickler()
-u.purgeDataBase()
-print('Purged database')
+if __name__ == "__main__":
+    u = Unpickler()
+    u.purgeDataBase()
+    print('Purged database')
 
-u.loadObjectsTable()
-print('Loaded objects table')
+    u.loadObjectsTable()
+    print('Loaded objects table')
 
-u.loadTypesTable()
-print('Loaded types table')
+    u.loadTypesTable()
+    print('Loaded types table')
 
-u.loadSubjectsTable()
-print('Loaded subjects table')
+    u.loadSubjectsTable()
+    print('Loaded subjects table')
 
-u.limitTypesTo(20)
-u.limitSubjectsTo(20)
-print('Limited categories')
+    u.limitTypesTo(20)
+    u.limitSubjectsTo(20)
+    print('Limited categories')
 
-u.clearOrphanedExhibits()
-print('Cleaned up DB')
+    u.clearOrphanedExhibits()
+    print('Cleaned up DB')
