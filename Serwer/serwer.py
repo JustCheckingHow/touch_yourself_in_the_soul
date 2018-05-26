@@ -18,10 +18,13 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type','application/json')
         self.end_headers()
 
+        db = DBInterface()
+        
         jsonIds = []
         howMany = 20
         for id in interface.onExhibitsRequested(howMany):
-            jsonIds.append({"id": id})
+            imgId = db.getPhotoId(id)
+            jsonIds.append({"id": str(id) + "/" + imgId})
 
         jsonMsg = {}
         jsonMsg["exhibitsIds"] = jsonIds
