@@ -3,9 +3,19 @@ import pickle
 
 data = pickle.load(open("data.pickle", "rb"))
 
-with read("subjects.txt") as f:
-    filter = f.readlines()
-filter = [x.strip() for x in filter]
+class DBInterface:
+
+    def __init__(self):
+        pass
+      
+    def getSubject(self, id):
+        return ["subject"]
+        
+    def getObject(self, id):
+        return ["object"]
+        
+    def getType(self, id):
+        return ["type"]
 
 class Unpickler:
     def loadObjectsTable(self):
@@ -31,17 +41,15 @@ class Unpickler:
             conn.execute("INSERT INTO Objects (id, title, creator, description, format, 'date') VALUES (?, ?, ?, ?, ?, ?)", (39000 + i, title, creator, description, form, date))
             conn.commit()
         conn.close()
- 
+
     def loadSubjectsTable(self):
         conn = connect('baza1.db')
         for i, e in enumerate(data):
             for el in e:
                 if ("subject" in el and "(" not in el[1] and "-" not in el[1] and "." not in el[1]): #type
                     temp = str(el[1])
-
-                    if temp in filter:
-                        conn.execute("INSERT INTO subjects (objectId, subject) VALUES (?, ?)", (39000 +i, temp))
-                        conn.commit()
+                    conn.execute("INSERT INTO subjects (objectId, subject) VALUES (?, ?)", (39000 +i, temp))
+                    conn.commit()
 
         conn.close()
 
