@@ -1,10 +1,10 @@
 import numpy as np
 import math
+from Serwer.dBinterface import DBInterface
 
 
 class Category:
     def __init__(self):
-
         # initializes the dictionaries for each category e.g:
         # Category style:
         # impressionism : {"selection": 0, "hits": 0,  "ucb": 0} # zero is number of view and
@@ -13,7 +13,7 @@ class Category:
 
 class UCB_Assessment:
     def __init__(self, categories_list):
-        self.cat_list = self.category_into_assesment(categories_list)
+        self.cat_list = categories_list
 
     def category_into_assesment(self, user_list):
         """
@@ -30,40 +30,57 @@ class UCB_Assessment:
     def update_ucb(self, turn, hits, selection):
         average_hits = hits / selection
         delta = np.sqrt(3 / 2 * np.log(turn) / selection)
-        ucb = average_hits * 2 + selection
+        print(delta)
+        ucb = average_hits * 2 + delta
         return ucb
 
     def run_assessment(self):
         # separate assesments for each category
         # fetch all categories and initialize dicts inside them
-        global_categories = [Category() for i in range(self.cat_list-1)]
-        self.assesment = self.cat_list[:, 2]
+        self.global_categories = [Category() for i in range(len(self.cat_list)-1)]
+        print(len(self.cat_list))
         for turn, judgement in enumerate(self.cat_list):
+            turn += 1
             if judgement[-1] == 1: # like
                 for i, category in enumerate(judgement[:-1]): # skip assesment
-                    if category in global_categories[i].cat_dictionary:
-                        global_categories[i].cat_dictionary[category]["hits"] += 1
-                        global_categories[i].cat_dictionary[category]["selection"] += 1
-                        global_categories[i].cat_dictionary[category]["ucb"] = self.update_ucb(turn,
-                                                                                               global_categories[i].cat_dictionary[category]["hits"],
-                                                                                               global_categories[i].cat_dictionary[category]["selection"])
+                    if category in self.global_categories[i].cat_dictionary:
+                        self.global_categories[i].cat_dictionary[category]["hits"] += 1
+                        self.global_categories[i].cat_dictionary[category]["selection"] += 1
+                        self.global_categories[i].cat_dictionary[category]["ucb"] = self.update_ucb(turn,
+                                                                                               self.global_categories[i].cat_dictionary[category]["hits"],
+                                                                                               self.global_categories[i].cat_dictionary[category]["selection"])
                     else:
-                        global_categories[i].cat_dictionary[category] = {"hits": 1,
+                        self.global_categories[i].cat_dictionary[category] = {"hits": 1,
                                                                          "selection": 1,
                                                                          "ucb": self.update_ucb(turn, 1, 1)}
             elif judgement[-1] == 2: # dont like
-                    if category in global_categories[i].cat_dictionary:
-                        global_categories[i].cat_dictionary[category]["selection"] += 1
-                        global_categories[i].cat_dictionary[category]["ucb"] = self.update_ucb(turn,
-                                                                                               global_categories[i].cat_dictionary[category]["hits"],
-                                                                                               global_categories[i].cat_dictionary[category]["selection"])
+                for i, category in enumerate(judgement[:-1]): # skip assesment
+                    if category in self.global_categories[i].cat_dictionary:
+                        self.global_categories[i].cat_dictionary[category]["selection"] += 1
+                        self.global_categories[i].cat_dictionary[category]["ucb"] = self.update_ucb(turn,
+                                                                                               self.global_categories[i].cat_dictionary[category]["hits"],
+                                                                                               self.global_categories[i].cat_dictionary[category]["selection"])
                     else:
-                        global_categories[i].cat_dictionary[category] = {"hits": 0,
+                        self.global_categories[i].cat_dictionary[category] = {"hits": 0,
                                                                          "selection": 1,
                                                                          "ucb": self.update_ucb(turn, 0, 1)}
             else:
                 pass
 
+    def yield_results(self):
+        for category in self.global_categories:
+            print(category.cat_dictionary)
+
 if __name__ == "__main__":
-    
-    run_algorithm()
+    db = DBInterface("Serwer/baza1.db")
+    # 39000 - 42000
+    global_cat_list = []
+    for i in range(39000, 39100):
+        sublist = db.getSubject(i)
+        if len(sublist) != 0:
+            sublist.append(np.random.randint(0, 3))
+            global_cat_list.append(sublist)
+    print(global_cat_list)
+    ucb = UCB_Assessment(global_cat_list)
+    ucb.run_assessment()
+    ucb.yield_results()
