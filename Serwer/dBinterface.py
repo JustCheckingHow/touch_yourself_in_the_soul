@@ -5,6 +5,9 @@ import pickle
 
 _DATABASE_ = "baza1.db"
 
+with open("subjects.txt", "r") as f:
+    filters = f.readlines()
+
 class DBInterface:
 
     def __init__(self):
@@ -57,8 +60,9 @@ class Unpickler:
             for el in e:
                 if ("subject" in el and "(" not in el[1] and "-" not in el[1] and "." not in el[1]): #type
                     temp = str(el[1])
-                    conn.execute("INSERT INTO subjects (objectId, subject) VALUES (?, ?)", (39000 +i, temp))
-                    conn.commit()
+                    if temp in filters:
+                        conn.execute("INSERT INTO subjects (objectId, subject) VALUES (?, ?)", (39000 +i, temp))
+                        conn.commit()
 
         conn.close()
 
