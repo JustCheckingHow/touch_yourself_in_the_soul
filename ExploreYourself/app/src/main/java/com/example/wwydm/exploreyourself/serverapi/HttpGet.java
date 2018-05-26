@@ -2,7 +2,7 @@ package com.example.wwydm.exploreyourself.serverapi;
 
 import android.util.Log;
 
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Vector;
 
 public class HttpGet implements Runnable {
     private URL url;
@@ -22,10 +23,12 @@ public class HttpGet implements Runnable {
     private HttpURLConnection connection;
     protected StringBuffer response;
     private String message;
+    private ServerApi.ServerApiListener listener;
 
-    public HttpGet(String message)
+    public HttpGet(String message, ServerApi.ServerApiListener listener)
     {
         this.message = message;
+        this.listener = listener;
     }
 
     @Override
@@ -90,7 +93,6 @@ public class HttpGet implements Runnable {
             String line;
             while ((line = rd.readLine()) != null) {
                 response.append(line);
-                response.append('\r');
             }
             rd.close();
         } catch(Exception ex)
@@ -98,15 +100,23 @@ public class HttpGet implements Runnable {
             Log.e("Http", "getResponse", ex);
         }
 
-//        //Encode Response with JSON
-//        try {
-//            JSONObject json = new JSONObject(response.toString());
-//            String msg = json.getString("msg");
-//            Log.d("JSON decoded: ", msg);
-//
-//        }catch(JSONException ex){
-//            Log.e("JSON", "parseHTTPResponse", ex);
-//        }
+        // Parse result
+        Vector<Exhibit> toReturn = new Vector<>();
+        try {
+            JSONObject jObject = new JSONObject(response.toString());
+            JSONArray jArray = jObject.getJSONArray("exhibitsIds");
+
+            for (int i = 0; i < jArray.length(); i++) {
+
+                JSONObject o = jArray.getJSONObject(i);
+                toReturn.add(new Exhibit(o.getString("id")));
+            }
+
+            listener.onGotExhibitsToShow(toReturn);
+        } catch (Exception e) {
+
+            listener.onGotExhibitsToShow(toReturn);
+        }
     }
 }
 
