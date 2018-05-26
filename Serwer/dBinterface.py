@@ -20,6 +20,10 @@ class DBInterface:
         cur = self.conn.execute("SELECT type FROM types WHERE objectId = "+str(id)+"")
         return [i[0] for i in cur.fetchall()]
 
+    def getPhotoId(self, id):
+        cur = self.conn.execute("SELECT identifier FROM Objects WHERE objectId = "+str(id)+"")
+        return [i[0] for i in cur.fetchall()]
+
 class Unpickler:
     def __init__(self):
         self.data = pickle.load(open("data.pickle", "rb"))
