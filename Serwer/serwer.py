@@ -20,18 +20,35 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         db = DBInterface()
         
-        jsonIds = []
-        howMany = 20
-        for id in interface.onExhibitsRequested(howMany):
-            imgId = db.getPhotoId(id)
-            jsonIds.append({"id": str(id) + "/" + imgId})
+        opts = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
+        
+        if "howMany" in opts:
+            jsonIds = []
+            howMany = int(opts.split("=")[1])
+            for id in interface.onExhibitsRequested(howMany):
+                imgId = db.getPhotoId(id)
+                jsonIds.append({"id": str(id) + "/" + imgId[0]})
 
-        jsonMsg = {}
-        jsonMsg["exhibitsIds"] = jsonIds
-        jsonData = json.dumps(jsonMsg)
-        self.wfile.write(bytes(jsonData, "utf8"))
-        print("GET after message write")
-
+            jsonMsg = {}
+            jsonMsg["exhibitsIds"] = jsonIds
+            jsonData = json.dumps(jsonMsg)
+            self.wfile.write(bytes(jsonData, "utf8"))
+            print("GET after message write")
+        elif "options" in opts:
+            id = opts.split("=")[1]
+            options = db.getObject(id)
+            optionsDict = {"title": options[0], "creator": options[1], "format": options[2], "date": options[3], "identifier": options[4]}
+            jsonData = json.dumps(optionsDict)
+            self.wfile.write(bytes(jsonData, "utf8"))
+            print("GET after message write")
+        elif "suggestion" in opts:
+            # TODO get proposition now
+            idDict = {}
+            idDict["id"] = 1234 # Get suggested exhibit id
+            jsonData = json.dumps(idDict)
+            self.wfile.write(bytes(jsonData, "utf8"))
+            print("GET after message write")
+            
         return
 
     def do_POST(self):
