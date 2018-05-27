@@ -99,9 +99,14 @@ public class HttpGet implements Runnable {
 
             try {
                 JSONObject jObject = new JSONObject(response.toString());
-
-                listener.onGotExhibitsData(jObject.getString("title"), jObject.getString("creator"),
-                        jObject.getString("format"), jObject.getString("date"), jObject.getString("identifier"));
+                String[] data = new String[6];
+                data[0] = jObject.getString("title");
+                data[1] = jObject.getString("creator");
+                data[2] = jObject.getString("description");
+                data[3] = jObject.getString("format");
+                data[4] = jObject.getString("date");
+                data[5] = jObject.getString("identifier");
+                listener.onGotExhibitsData(data);
             } catch (Exception e) {
                 Log.e("INFO", "Bad JSON in response");
             }

@@ -11,7 +11,15 @@ public class ServerApi {
     public interface ServerApiListener {
 
         void onGotExhibitsToShow(Vector<Exhibit> exhibits);
-        void onGotExhibitsData(String title, String creator, String format, String date, String identifier);
+        /**
+         * [0] = title
+         * [1] = creator
+         * [2] = description
+         * [3] = format
+         * [4] = date
+         * [5] = identifier
+         */
+        void onGotExhibitsData(String[] data);
         void onGotSuggestedExhibit(Exhibit e);
     }
     private ServerApiListener listener;

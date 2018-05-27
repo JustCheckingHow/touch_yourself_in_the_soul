@@ -12,6 +12,9 @@ class AIInterface:
 	def onExhibitsRates(self, rates):
 		pass
 		
+    def getSuggestedId(self):
+        return "01/iver"
+        
 class TestAiInterface(AIInterface):
 
 	def onExhibitsRequested(self, howMany):

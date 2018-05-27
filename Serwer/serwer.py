@@ -7,7 +7,11 @@ import urllib
 from aiinterface import TestAiInterface
 from dBinterface import DBInterface
 
-interface = TestAiInterface()
+import sys
+sys.path.append("..")
+from UCB_Server_Interface import UCBInterface
+
+interface = UCBInterface()
 
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
@@ -38,14 +42,18 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         elif "options" in opts:
             id = opts.split("=")[1]
             options = db.getObject(id)
-            optionsDict = {"title": options[0], "creator": options[1], "format": options[2], "date": options[3], "identifier": options[4]}
+            print(options)
+            optionsDict = {"title": options[0], "creator": options[1], "description": options[2], "format": options[3], "date": options[4], "identifier": options[5]}
             jsonData = json.dumps(optionsDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
         elif "suggestion" in opts:
-            # TODO get proposition now
             idDict = {}
-            idDict["id"] = 1234 # Get suggested exhibit id
+            
+            id = interface.getSuggestedId()
+            imgId = str(db.getPhotoId(id))
+            idDict["id"] = id + "/" + imgId[0]
+            
             jsonData = json.dumps(idDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
@@ -64,19 +72,20 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         jsonString = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
 
-        print(type(jsonString))
         print("POST: " + jsonString)
 
         ratesJson = json.loads(jsonString)
         rates = ratesJson["rates"]
-        print(rates)
         print("POST done json object")
 
         categoriesAndRates = {}
 
         for r in rates:
-            id = r["id"]
-            rate = r["rate"]
+            try:
+                id = r["id"]
+                rate = r["rate"]
+            except:
+                continue
 
             # Translate id to category
             style = db.getSubject(id)
@@ -85,10 +94,6 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         interface.onExhibitsRates(categoriesAndRates)
 
-        """message = "Hello world!"
-        #here we can process data and the send it to client
-
-        self.wfile.write(bytes(message, "utf8"))"""
         return
 
     def rateToNumber(self, rate):
@@ -101,7 +106,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('', 8080)
+    server_address = ('', 80)
     httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
     print('running server...')
     httpd.serve_forever()
