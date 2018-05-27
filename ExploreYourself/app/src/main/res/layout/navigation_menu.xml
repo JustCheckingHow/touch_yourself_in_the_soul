@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintHeight_default="spread">
+
+    <item
+        android:id="@+id/action_item1"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Discovery mode" />
+
+    <item
+        android:id="@+id/action_item2"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="Intelligent gallery" />
+
+    <item
+        android:id="@+id/action_item3"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="Plan my trip" />
+</menu>

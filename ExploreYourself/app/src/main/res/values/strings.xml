@@ -2,7 +2,7 @@
     <string name="app_name">Explore Yourself</string>
     <string name="like_it_button_explore">I like it</string>
     <string name="not_like_it_button">I don\'t like it</string>
-    <string name="trip_summary">Trip summary</string>
+    <string name="trip_summary">Plan my trip</string>
     <string name="our_propositions">Our propositions</string>
     <string name="ipsum">Where will I find it?</string>
 </resources>
