@@ -7,7 +7,11 @@ import urllib
 from aiinterface import TestAiInterface
 from dBinterface import DBInterface
 
-interface = TestAiInterface()
+import sys
+sys.path.append("..")
+from UCB_Server_Interface import UCBInterface
+
+interface = UCBInterface()
 
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
