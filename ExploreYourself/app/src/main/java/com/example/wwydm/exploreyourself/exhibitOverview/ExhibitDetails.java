@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.example.wwydm.exploreyourself.MainExploreActivity;
 import com.example.wwydm.exploreyourself.R;
-import com.example.wwydm.exploreyourself.TripPropositions;
+import com.example.wwydm.exploreyourself.tripPropositions;
 
 
 public class ExhibitDetails extends AppCompatActivity {
@@ -39,7 +39,7 @@ public class ExhibitDetails extends AppCompatActivity {
                                 startActivity(new Intent(ExhibitDetails.this, ExhibitsOverview.class));
                                 return true;
                             case R.id.action_item3:
-                                startActivity(new Intent(ExhibitDetails.this, TripPropositions.class));
+                                startActivity(new Intent(ExhibitDetails.this, tripPropositions.class));
                                 return true;
                         }
                         return false;

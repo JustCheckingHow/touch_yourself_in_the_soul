@@ -22,16 +22,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.wwydm.exploreyourself.exhibitOverview.ExhibitDetails;
 import com.example.wwydm.exploreyourself.exhibitOverview.ExhibitsOverview;
 import com.example.wwydm.exploreyourself.serverapi.Exhibit;
 import com.example.wwydm.exploreyourself.serverapi.ServerApi;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-
 import java.util.Vector;
 
 public class MainExploreActivity extends AppCompatActivity implements ServerApi.ServerApiListener {
@@ -44,12 +41,9 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     private Vector<Exhibit> toShow;
 
 
-    private String currExtraTitle;
-    private String currExtraCreator;
-
     private BottomNavigationView bottomNavigationView;
 
-    static final int batchMaxCounter = 20;
+    static final int batchMaxCounter = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +56,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                     new String[]{Manifest.permission.INTERNET},
                     2);
         }
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -73,7 +68,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                                 startActivity(new Intent(MainExploreActivity.this, ExhibitsOverview.class));
                                 return true;
                             case R.id.action_item3:
-                                startActivity(new Intent(MainExploreActivity.this, TripPropositions.class));
+                                startActivity(new Intent(MainExploreActivity.this, tripPropositions.class));
                                 return true;
                         }
                         return false;
@@ -202,8 +197,8 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
 
     @Override
     public void onGotExhibitsData(String[] data) {
-        currExtraCreator = data[1];
-        currExtraTitle = data[0];
+        String currExtraCreator = data[1];
+        String currExtraTitle = data[0];
 
         String infoStringQuery = currExtraTitle;
         if (currExtraTitle == null){
@@ -230,7 +225,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     }
 
     @Override
-    public void onGotSuggestedExhibit(Exhibit e) {
+    public void onGotSuggestedExhibit(Vector<Exhibit> e) {
 
     }
 
@@ -254,6 +249,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                     currentID = 0;
                     // exceeded batch number
                     sa.postExhibitsRates(toShow);
+                    bottomNavigationView.setVisibility(View.VISIBLE);
                 }
                 new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
                 return null;

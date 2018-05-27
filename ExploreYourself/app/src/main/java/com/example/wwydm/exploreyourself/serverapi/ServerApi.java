@@ -20,7 +20,7 @@ public class ServerApi {
          * [5] = identifier
          */
         void onGotExhibitsData(String[] data);
-        void onGotSuggestedExhibit(Exhibit e);
+        void onGotSuggestedExhibit(Vector<Exhibit> e);
     }
     private ServerApiListener listener;
 
@@ -44,9 +44,9 @@ public class ServerApi {
         get( "options=" + e.getExId());
     }
 
-    public void getSuggestedExhibit() {
+    public void getSuggestedExhibit(int howMany) {
 
-        get("suggestion");
+        get("suggestion=" + String.valueOf(howMany));
     }
 
     public void postExhibitsRates(Vector<Exhibit> exhibitsWithRates) {
