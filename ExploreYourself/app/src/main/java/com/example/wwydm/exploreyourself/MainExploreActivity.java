@@ -37,6 +37,11 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     private ProgressDialog pd;
     private Vector<Exhibit> toShow;
 
+
+    private String currExtraTitle;
+    private String currExtraCreator;
+
+
     static final int batchMaxCounter = 20;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +75,13 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     }
 
     public void onFabClick(View v){
-        String query = "Jacek_Malczewski";
-        builder = new AlertDialog.Builder(MainExploreActivity.this,
-                android.R.style.Theme_Material_Dialog_Alert);
-        builder.setTitle("Artwork info: " + query)
-                .setIcon(android.R.drawable.ic_menu_compass)
-                .setCancelable(true);
-        new JsonParser().execute(query, builder);
+        sa.getExhibitsData(toShow.get(currentID));
+
+        pd = new ProgressDialog(MainExploreActivity.this);
+        pd.setMessage("Fetching extra info");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setCancelable(false);
+        pd.show();
     }
 
     public void onButtonLike(View v) {
@@ -156,7 +161,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
 
     @Override
     public void onGotExhibitsToShow(Vector<Exhibit> exhibits) {
-        Log.d("APP", "Donwloading data...");
+        Log.d("APP", "Downloading data...");
         // TODO show got exhibits
         if (exhibits == null){
             Log.d("APP", "NULL");
@@ -174,8 +179,32 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     }
 
     @Override
-    public void onGotExhibitsData(String title, String creator, String format, String date, String identifier) {
+    public void onGotExhibitsData(String[] data) {
+        currExtraCreator = data[1];
+        currExtraTitle = data[0];
 
+        String infoStringQuery = currExtraTitle;
+        if (currExtraTitle == null){
+            if (currExtraCreator == null){
+                Log.d("APP INFO", "NULL AUTHOR");
+                return;
+            }
+            else {
+                infoStringQuery = currExtraCreator;
+            }
+        }
+        else {
+            Log.d("APP INFO", currExtraTitle);
+        }
+        Log.d("APP INFO", infoStringQuery);
+
+        pd.dismiss();
+        builder = new AlertDialog.Builder(MainExploreActivity.this,
+                android.R.style.Theme_Material_Dialog_Alert);
+        builder.setTitle("Artwork info: " + infoStringQuery)
+                .setIcon(android.R.drawable.ic_menu_compass)
+                .setCancelable(true);
+        new JsonParser().execute(infoStringQuery, builder);
     }
 
     @Override
@@ -201,8 +230,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                 currentID ++;
                 if (currentID >= batchMaxCounter){
                     currentID = 0;
-//                    Toast.makeText(MainExploreActivity.this,
-//                            "Exceeded batch number...Sending to https server", Toast.LENGTH_LONG).show();
+                    // exceeded batch number
                     sa.postExhibitsRates(toShow);
                 }
                 new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
