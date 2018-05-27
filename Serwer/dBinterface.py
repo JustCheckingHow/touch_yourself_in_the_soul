@@ -27,6 +27,14 @@ class DBInterface:
         cur = self.conn.execute("SELECT identifier FROM Objects WHERE id = "+str(id)+"")
         return [i[0] for i in cur.fetchall()]
 
+    def getIdsWithSubjectOrType(self, subjectOrType):
+        curSub = self.conn.execute("SELECT objectId FROM subjects WHERE subject=\"" + subjectOrType + "\"")
+        curType = self.conn.execute("SELECT objectId FROM types WHERE type=\"" + subjectOrType + "\"")
+        return curSub.fetchall() + curType.fetchall()
+        
+    def close(self):
+        self.conn.close()
+        
 class Unpickler:
     def __init__(self):
         self.data = pickle.load(open("data.pickle", "rb"))
