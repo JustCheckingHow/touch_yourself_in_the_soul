@@ -85,7 +85,7 @@ public class HttpPost implements Runnable {
         }
 
         //Get Response
-        try {
+        /*try {
             InputStream is = connection.getInputStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             response = new StringBuffer();
@@ -107,7 +107,7 @@ public class HttpPost implements Runnable {
 
         }catch(JSONException ex){
             Log.e("JSON", "parseHTTPResponse", ex);
-        }
+        }*/
     }
 }
 
