@@ -201,6 +201,9 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                 currentID ++;
                 if (currentID >= batchMaxCounter){
                     currentID = 0;
+//                    Toast.makeText(MainExploreActivity.this,
+//                            "Exceeded batch number...Sending to https server", Toast.LENGTH_LONG).show();
+                    sa.postExhibitsRates(toShow);
                 }
                 new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
                 return null;
