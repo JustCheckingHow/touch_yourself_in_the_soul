@@ -43,23 +43,30 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
             print("GET after message write")
         elif "options" in opts:
             id = opts.split("=")[1]
+            db = DBInterface()
             options = db.getObject(id)
+            db.close()
             print(options)
             optionsDict = {"title": options[0], "creator": options[1], "description": options[2], "format": options[3], "date": options[4], "identifier": options[5]}
             jsonData = json.dumps(optionsDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
         elif "suggestion" in opts:
-            idDict = {}
+            jsonIds = []
+            howMany = int(opts.split("=")[1])
             
-            id = interface.getSuggestedId()
             db = DBInterface()
-            imgId = str(db.getPhotoId(id))
-            print(imgId)
+            for id in interface.getSuggestedId(howMany):
+                print(id)
+                imgId = db.getPhotoId(id)
+                print(imgId)
+                print(imgId[0])
+                jsonIds.append({"id": str(id) + "/" + imgId[0]})
             db.close()
-            idDict["id"] = str(id) + "/" + imgId[2:-2]
             
-            jsonData = json.dumps(idDict)
+            jsonMsg = {}
+            jsonMsg["exhibitsIds"] = jsonIds
+            jsonData = json.dumps(jsonMsg)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
 
@@ -108,7 +115,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('', 8080)
+    server_address = ('', 80)
     httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
     print('running server...')
     httpd.serve_forever()
