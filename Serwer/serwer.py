@@ -19,9 +19,10 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         db = DBInterface()
-        
-        opts = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
-        
+
+        opts = self.path[2:]
+        print(opts)
+
         if "howMany" in opts:
             jsonIds = []
             howMany = int(opts.split("=")[1])
@@ -48,7 +49,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
             jsonData = json.dumps(idDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
-            
+
         return
 
     def do_POST(self):
@@ -62,7 +63,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         db = DBInterface()
 
         jsonString = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
-        
+
         print(type(jsonString))
         print("POST: " + jsonString)
 
@@ -79,7 +80,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
             # Translate id to category
             style = db.getSubject(id)
-            genre = db.getType(id)  
+            genre = db.getType(id)
             categoriesAndRates[id] = [style, genre, self.rateToNumber(rate)]
 
         interface.onExhibitsRates(categoriesAndRates)
@@ -89,7 +90,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(bytes(message, "utf8"))"""
         return
-        
+
     def rateToNumber(self, rate):
         if rate == "NONE":
             return 0
@@ -100,7 +101,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('', 80)
+    server_address = ('', 8080)
     httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
     print('running server...')
     httpd.serve_forever()
