@@ -112,7 +112,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     }
 
     private void batchGuard(Exhibit.Choice ch){
-        if (batchCounter < batchMaxCounter-1){
+        if (batchCounter < batchMaxCounter){
                 toShow.get(currentID).setChoice(ch);
             batchCounter ++;
         }
@@ -151,7 +151,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
 
     @Override
     public void onGotExhibitsToShow(Vector<Exhibit> exhibits) {
-        Log.d("APP", "ENTERS");
+        Log.d("APP", "Donwloading data...");
         // TODO show got exhibits
         if (exhibits == null){
             Log.d("APP", "NULL");
