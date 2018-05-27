@@ -17,7 +17,7 @@ class DBInterface:
 
     def getObject(self, id):
         cur = self.conn.execute("SELECT title, creator, description, format, date, identifier FROM Objects WHERE id = "+str(id)+"")
-        return [i[0] for i in cur.fetchall()]
+        return cur.fetchall()[0]
 
     def getType(self, id):
         cur = self.conn.execute("SELECT type FROM types WHERE objectId = "+str(id)+"")
