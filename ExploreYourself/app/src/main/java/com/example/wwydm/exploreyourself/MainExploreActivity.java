@@ -21,17 +21,15 @@ import android.widget.Toast;
 import com.example.wwydm.exploreyourself.serverapi.Exhibit;
 import com.example.wwydm.exploreyourself.serverapi.ServerApi;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.Random;
+
 import java.util.Vector;
 
 public class MainExploreActivity extends AppCompatActivity implements ServerApi.ServerApiListener {
     ImageView iv_MainPhoto;
-    Random random;
-    private int batchCounter;
-    private Vector<Exhibit> batchAssessment;
     private int currentID;
     private ServerApi sa;
     private  AlertDialog.Builder builder;
@@ -61,7 +59,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
             }
         });
 
-        sa = new ServerApi("192.168.43.144", this);
+        sa = new ServerApi("192.168.1.106", this);
         sa.getExhibitsToShow(batchMaxCounter);
 
         pd = new ProgressDialog(MainExploreActivity.this);
@@ -69,15 +67,6 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(false);
         pd.show();
-
-        batchCounter = 0;
-        batchAssessment = new Vector<>(batchMaxCounter);
-
-        random = new Random();
-        iv_MainPhoto = findViewById(R.id.iv_MainPhoto);
-        currentID =  0;
-//        new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
-        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     public void onFabClick(View v){
@@ -91,38 +80,54 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     }
 
     public void onButtonLike(View v) {
+        disableAllButtons();
         batchGuard(Exhibit.Choice.LIKE);
         animateOut();
-        currentID++;
         new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
+        enableAllButtons();
     }
 
     public void onButtonNotLike(View v) {
+        disableAllButtons();
         batchGuard(Exhibit.Choice.DISLIKE);
         animateOut();
-        currentID++;
         new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
+        enableAllButtons();
     }
 
     public void onButtonNotDecided(View v) {
+        disableAllButtons();
         batchGuard(Exhibit.Choice.NONE);
         animateOut();
-        currentID++;
         new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
+        enableAllButtons();
+    }
+
+    private void disableAllButtons(){
+        findViewById(R.id.button).setClickable(false);
+        findViewById(R.id.button2).setClickable(false);
+        findViewById(R.id.button3).setClickable(false);
+    }
+
+    private void enableAllButtons(){
+        findViewById(R.id.button).setClickable(true);
+        findViewById(R.id.button2).setClickable(true);
+        findViewById(R.id.button3).setClickable(true);
     }
 
     private void batchGuard(Exhibit.Choice ch){
-        if (batchCounter < batchMaxCounter){
-                toShow.get(currentID).setChoice(ch);
-            batchCounter ++;
+        if (currentID < batchMaxCounter - 1){
+            toShow.get(currentID).setChoice(ch);
+            currentID++;
         }
         else{
+            toShow.get(currentID).setChoice(ch);
             Toast.makeText(MainExploreActivity.this,
                     "Exceeded batch number...Sending to https server", Toast.LENGTH_LONG).show();
             sa.postExhibitsRates(toShow);
-            batchCounter = 0;
             currentID = 0;
         }
+        Log.e("APP INF", String.valueOf(currentID));
     }
 
     private void animateOut() {
@@ -158,10 +163,14 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         }
         for (int i = 0; i < exhibits.size(); i++) {
             exhibits.get(i).setImgUrl();
-    }
+        }
         pd.setMessage("Images Loaded!");
         pd.dismiss();
         toShow = exhibits;
+
+        iv_MainPhoto = findViewById(R.id.iv_MainPhoto);
+        currentID =  0;
+        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     @Override
@@ -189,6 +198,11 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                 return BitmapFactory.decodeStream(input);
             } catch (IOException e) {
                 e.printStackTrace();
+                currentID ++;
+                if (currentID >= batchMaxCounter){
+                    currentID = 0;
+                }
+                new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
                 return null;
             }
         }
