@@ -80,7 +80,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                     }
                 });
         bottomNavigationView.setSelectedItemId(R.id.action_item1);
-        
+
         FloatingActionButton myFab = findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
