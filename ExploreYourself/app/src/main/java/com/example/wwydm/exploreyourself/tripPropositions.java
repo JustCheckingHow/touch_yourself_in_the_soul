@@ -1,9 +1,11 @@
 package com.example.wwydm.exploreyourself;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import java.util.Random;
 public class TripPropositions extends AppCompatActivity {
     LinearLayout imagesList;
     LayoutInflater inflater;
+    private BottomSheetBehavior mBottomSheetBehavior;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +33,15 @@ public class TripPropositions extends AppCompatActivity {
 
         this.imagesList = findViewById(R.id.ll_imagesList);
         this.inflater = getLayoutInflater();
+//        View bottomSheet = findViewById(R.id.bottom_sheet);
+//        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+//        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        LinearLayout others = findViewById(R.id.ll_userAdded);
+        //        LinearLayout others = findViewById(R.id.ll_userAdded);
 
         Random random = new Random();
         for (int i=0; i<3; i++)
            addExhibitToSuggested("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ random.nextInt(23000), imagesList);
-
-        for (int i=0; i<3; i++)
-            addExhibitToSuggested("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ random.nextInt(23000), others);
     }
 
     public void onTripPlanItemClick(View v) {
@@ -46,14 +50,19 @@ public class TripPropositions extends AppCompatActivity {
             ((TextView)imagesList.getChildAt(i).findViewById(R.id.tv_title)).setTextColor(Color.BLACK);
             ((TextView)imagesList.getChildAt(i).findViewById(R.id.tv_surname)).setTextColor(Color.GRAY);
         }
-
         v.setBackgroundColor(getColor(R.color.colorAccentBackground));
         ((TextView)v.findViewById(R.id.tv_title)).setTextColor(Color.WHITE);
         ((TextView)v.findViewById(R.id.tv_surname)).setTextColor(Color.WHITE);
+        showBottomScrollView();
     }
 
     private void addExhibitToSuggested(String url, LinearLayout v) {
         new exhibitAdder().execute(url, v);
+    }
+
+    private  void showBottomScrollView(){
+        BottomScrollView bsv = new BottomScrollView();
+        bsv.show(getSupportFragmentManager(), "Bottom sheet");
     }
 
     private class exhibitAdder extends AsyncTask {
