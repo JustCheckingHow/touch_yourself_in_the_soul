@@ -48,9 +48,12 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
         elif "suggestion" in opts:
-            # TODO get proposition now
             idDict = {}
-            idDict["id"] = 1234 # Get suggested exhibit id
+            
+            id = interface.getSuggestedId()
+            imgId = str(db.getPhotoId(id))
+            idDict["id"] = id + "/" + imgId[0]
+            
             jsonData = json.dumps(idDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
@@ -69,12 +72,10 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         jsonString = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
 
-        print(type(jsonString))
         print("POST: " + jsonString)
 
         ratesJson = json.loads(jsonString)
         rates = ratesJson["rates"]
-        print(rates)
         print("POST done json object")
 
         categoriesAndRates = {}
@@ -93,10 +94,6 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         interface.onExhibitsRates(categoriesAndRates)
 
-        """message = "Hello world!"
-        #here we can process data and the send it to client
-
-        self.wfile.write(bytes(message, "utf8"))"""
         return
 
     def rateToNumber(self, rate):
