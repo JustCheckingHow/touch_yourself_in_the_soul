@@ -11,7 +11,6 @@ public class ServerApi {
     public interface ServerApiListener {
 
         void onGotExhibitsToShow(Vector<Exhibit> exhibits);
-
         /**
          * [0] = title
          * [1] = creator

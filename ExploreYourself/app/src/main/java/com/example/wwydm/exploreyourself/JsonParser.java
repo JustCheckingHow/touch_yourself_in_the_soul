@@ -50,8 +50,11 @@ public class JsonParser extends AsyncTask<Object, Void, ArrayList<Object>>
         }
         catch(Exception ex)
         {
+            ArrayList<Object> ao2 = new ArrayList<>();
+            ao2.add(objects[0]);
+            ao2.add(objects[1]);
             Log.e("App", "AsyncTask error", ex);
-            return null;
+            return ao2;
         }
         finally
         {
@@ -72,9 +75,16 @@ public class JsonParser extends AsyncTask<Object, Void, ArrayList<Object>>
         if(response != null)
         {
             try {
+                String extract;
                 Object r = response.get(0);
-                JSONObject tj = (JSONObject) r;
-                String extract = tj.getString("extract");
+                try{
+                    JSONObject tj = (JSONObject) r;
+                    extract = tj.getString("extract");
+
+                }
+                catch (ClassCastException e){
+                    extract =(String) r;
+                }
                 Log.e("APP", extract);
                 Object build = response.get(1);
                 android.support.v7.app.AlertDialog.Builder ab = (android.support.v7.app.AlertDialog.Builder) build;
