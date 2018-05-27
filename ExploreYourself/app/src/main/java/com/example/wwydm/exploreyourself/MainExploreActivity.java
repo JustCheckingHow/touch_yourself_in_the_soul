@@ -7,8 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -162,6 +162,16 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         pd.setMessage("Images Loaded!");
         pd.dismiss();
         toShow = exhibits;
+    }
+
+    @Override
+    public void onGotExhibitsData(String title, String creator, String format, String date, String identifier) {
+        3
+    }
+
+    @Override
+    public void onGotSuggestedExhibit(Exhibit e) {
+
     }
 
     private class BitmapDownloader extends AsyncTask {
