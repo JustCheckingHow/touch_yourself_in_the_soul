@@ -9,7 +9,7 @@ class UCBInterface(TestAiInterface):
         self.suggestedCats = None
         
     def onExhibitsRequested(self, howMany):
-        return (39553, 41478, 40304, 40744, 39574, 41300, 41700, 41900, 39029, 40097, 39957)
+        return (41478, 40304, 40744, 39574, 39000, 39009, 39013, 39553, 39029, 40097)
 
     def onExhibitsRates(self, rates):
         ratesList = list(rates.values())

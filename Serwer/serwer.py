@@ -33,6 +33,8 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
             db = DBInterface()
             for id in interface.onExhibitsRequested(howMany):
                 imgId = db.getPhotoId(id)
+                if imgId == []:
+                    continue
                 jsonIds.append({"id": str(id) + "/" + imgId[0]})
             db.close()
             
