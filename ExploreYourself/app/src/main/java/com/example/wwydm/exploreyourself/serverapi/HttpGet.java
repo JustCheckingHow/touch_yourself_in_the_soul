@@ -24,9 +24,11 @@ public class HttpGet implements Runnable {
     protected StringBuffer response;
     private String message;
     private ServerApi.ServerApiListener listener;
+    private String serverAddress;
 
-    public HttpGet(String message, ServerApi.ServerApiListener listener)
+    public HttpGet(String serverAddress, String message, ServerApi.ServerApiListener listener)
     {
+        this.serverAddress = serverAddress;
         this.message = message;
         this.listener = listener;
     }
@@ -36,7 +38,7 @@ public class HttpGet implements Runnable {
     {
         try{
             url = new URL("http://"
-                    + "192.168.43.144"
+                    + this.serverAddress
                     + ":"
                     + "80?" + this.message);
 //                     + //Globals.getServerApiDestination());

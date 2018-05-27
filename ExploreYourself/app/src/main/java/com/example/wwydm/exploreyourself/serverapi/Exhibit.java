@@ -1,12 +1,19 @@
 package com.example.wwydm.exploreyourself.serverapi;
 
 public class Exhibit {
+    static final String predefined_URL = "http://cyfrowe.mnw.art.pl/Content/";
+
     public String getExId() {
-        return exId;
+        // exID is in form "/" and
+        return exId.split("/")[0];
+    }
+    public String getFullExId(){
+        return this.exId;
     }
 
     private String exId;
     private Choice choice;
+    private  String imgUrl;
 
     public enum Choice {
         NONE,
@@ -15,18 +22,24 @@ public class Exhibit {
     }
 
     public Exhibit(String exhibitId) {
-
         this.exId = exhibitId;
     }
 
     public Exhibit(String exhibitId, Choice userChoice) {
-
         this.exId = exhibitId;
         this.choice = userChoice;
     }
 
     public void setChoice(Choice choice) {
         this.choice = choice;
+    }
+
+    public String getImageUrl(){
+        return this.imgUrl;
+    }
+
+    public void setImgUrl(){
+        this.imgUrl = predefined_URL + this.exId + ".jpg";
     }
 
     public Choice getChoice() {

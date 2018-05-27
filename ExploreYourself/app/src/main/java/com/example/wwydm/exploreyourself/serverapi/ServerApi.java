@@ -18,7 +18,7 @@ public class ServerApi {
 
     public ServerApi(String serverAddress, ServerApiListener listener) {
 
-        serverAddr = serverAddress;
+        this.serverAddr = serverAddress;
         this.listener = listener;
     }
 
@@ -55,7 +55,7 @@ public class ServerApi {
                 a.put(j);
             }
             json.put("rates", a);
-            new Thread(new HttpPost(json.toString())).start();
+            new Thread(new HttpPost(this.serverAddr, json.toString())).start();
         } catch (Exception e) {
             System.err.print(e.getStackTrace().toString());
         }
@@ -64,7 +64,7 @@ public class ServerApi {
 
     private void get(String par) {
         try {
-            new Thread(new HttpGet(par, listener)).start();
+            new Thread(new HttpGet(this.serverAddr, par, listener)).start();
         } catch (Exception e) { }
     }
 }

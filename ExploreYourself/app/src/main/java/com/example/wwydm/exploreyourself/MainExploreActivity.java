@@ -2,16 +2,18 @@ package com.example.wwydm.exploreyourself;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,11 +31,13 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     ImageView iv_MainPhoto;
     Random random;
     private int batchCounter;
-    Vector<Exhibit> batchAssessment;
+    private Vector<Exhibit> batchAssessment;
     private int currentID;
-    ServerApi sa;
-    AlertDialog.Builder builder;
+    private ServerApi sa;
+    private  AlertDialog.Builder builder;
 
+    private ProgressDialog pd;
+    private Vector<Exhibit> toShow;
 
     static final int batchMaxCounter = 20;
     @Override
@@ -57,15 +61,23 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
             }
         });
 
-        sa = new ServerApi("http://192.168.0.201:80", this);
+        sa = new ServerApi("192.168.43.144", this);
         sa.getExhibitsToShow(batchMaxCounter);
+
+        pd = new ProgressDialog(MainExploreActivity.this);
+        pd.setMessage("Fetching images");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setCancelable(false);
+        pd.show();
+
         batchCounter = 0;
         batchAssessment = new Vector<>(batchMaxCounter);
 
         random = new Random();
         iv_MainPhoto = findViewById(R.id.iv_MainPhoto);
-        currentID =  random.nextInt(23000);
-        new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
+        currentID =  0;
+//        new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
+        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     public void onFabClick(View v){
@@ -77,36 +89,39 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                 .setCancelable(true);
         new JsonParser().execute(query, builder);
     }
+
     public void onButtonLike(View v) {
         batchGuard(Exhibit.Choice.LIKE);
         animateOut();
-        currentID =  random.nextInt(23000);
-        new BitmapDownloader().execute("https://picsum.photos/200/"+(random.nextInt(4)*100+100)+"/?id="+ currentID);
+        currentID++;
+        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     public void onButtonNotLike(View v) {
         batchGuard(Exhibit.Choice.DISLIKE);
         animateOut();
-        currentID =  random.nextInt(23000);
-        new BitmapDownloader().execute("https://picsum.photos/200?id="+ currentID);
+        currentID++;
+        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     public void onButtonNotDecided(View v) {
         batchGuard(Exhibit.Choice.NONE);
         animateOut();
-        currentID =  random.nextInt(23000);
-        new BitmapDownloader().execute("https://picsum.photos/200?id="+ currentID);
+        currentID++;
+        new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
     }
 
     private void batchGuard(Exhibit.Choice ch){
-        if (batchCounter < batchMaxCounter-1){
-            batchAssessment.add(new Exhibit(String.valueOf(currentID), ch));
+        if (batchCounter < batchMaxCounter){
+                toShow.get(currentID).setChoice(ch);
             batchCounter ++;
         }
         else{
             Toast.makeText(MainExploreActivity.this,
                     "Exceeded batch number...Sending to https server", Toast.LENGTH_LONG).show();
-            sa.postExhibitsRates(batchAssessment);
+            sa.postExhibitsRates(toShow);
+            batchCounter = 0;
+            currentID = 0;
         }
     }
 
@@ -136,8 +151,27 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
 
     @Override
     public void onGotExhibitsToShow(Vector<Exhibit> exhibits) {
-
+        Log.d("APP", "Donwloading data...");
         // TODO show got exhibits
+        if (exhibits == null){
+            Log.d("APP", "NULL");
+        }
+        for (int i = 0; i < exhibits.size(); i++) {
+            exhibits.get(i).setImgUrl();
+    }
+        pd.setMessage("Images Loaded!");
+        pd.dismiss();
+        toShow = exhibits;
+    }
+
+    @Override
+    public void onGotExhibitsData(String title, String creator, String format, String date, String identifier) {
+
+    }
+
+    @Override
+    public void onGotSuggestedExhibit(Exhibit e) {
+
     }
 
     private class BitmapDownloader extends AsyncTask {

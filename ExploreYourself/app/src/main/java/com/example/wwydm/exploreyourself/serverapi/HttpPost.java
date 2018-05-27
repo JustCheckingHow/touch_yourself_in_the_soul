@@ -22,9 +22,11 @@ public class HttpPost implements Runnable {
     private HttpURLConnection connection;
     protected StringBuffer response;
     private String message;
+    private String serverAddress;
 
-    public HttpPost(String message)
+    public HttpPost(String serverAddress, String message)
     {
+        this.serverAddress = serverAddress;
         this.message = message;
     }
 
@@ -33,7 +35,7 @@ public class HttpPost implements Runnable {
     {
         try{
             url = new URL("http://"
-                    + "192.168.43.144"
+                    + this.serverAddress
                     + ":"
                     + "80");
 //                     + //Globals.getServerApiDestination());
