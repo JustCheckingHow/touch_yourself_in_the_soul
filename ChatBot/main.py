@@ -2,6 +2,8 @@
 import random
 from flask import Flask, request
 from pymessenger.bot import Bot
+import requests
+import shutil
 
 app = Flask(__name__)
 ACCESS_TOKEN = 'EAAGP6gz9vWABAGUJJXtw2FLT33AM4P03EYxQynhEajvtZCZCSk6bAuZBk1zUG6ikpxQZCxEpz1Xf3WEgzJzJq1OAicFvadN561VmeH31IDK0C4izAUzhZAUVBk3pbuJbsyIKDYZAGPLCzWp6fbnZCKzorupxHWQYGM24TJKDjBPZBwZDZD'
@@ -24,8 +26,12 @@ def receive_message():
           messaging = event['messaging']
           for message in messaging:
             if message.get('message'):
+
                 #Facebook Messenger ID for user so we know where to send response back to
                 recipient_id = message['sender']['id']
+                if recipient_id == "455414088249434":
+                    return 'done'
+                print(message)
                 if message['message'].get('text'):
                     response_sent_text = get_message()
                     send_message(recipient_id, response_sent_text)
@@ -46,14 +52,27 @@ def verify_fb_token(token_sent):
 
 #chooses a random message to send to the user
 def get_message():
-    sample_responses = ["You are stunning!", "We're proud of you.", "Keep on being you!", "We're greatful to know you :)"]
+    pass
+    # saveImage("40048/rysobd6(p)")
+    # sample_responses = ["http://cyfrowe.mnw.art.pl/Content/40048/rysobd6(p).jpg"]
     # return selected item to the user
-    return random.choice(sample_responses)
+    # return random.choice(sample_responses)
+    # return self.send_attachment(recipient_id, "image", image_path, notification_type)
+
+
+def requestInitialIds():
+    r = requests.get("http://127.0.0.1?howMany=20")
+    print(r.text)
+
+
+
 
 #uses PyMessenger to send response to user
 def send_message(recipient_id, response):
     #sends user the text message provided via input response parameter
-    bot.send_text_message(recipient_id, response)
+    # bot.send_text_message(recipient_id, response)
+    bot.send_text_message(recipient_id, "123")
+    bot.send_image_url(recipient_id,  "http://cyfrowe.mnw.art.pl/Content/40048/rysobd6(p).jpg")
     return "success"
 
 if __name__ == "__main__":

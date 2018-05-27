@@ -11,6 +11,8 @@ public class ServerApi {
     public interface ServerApiListener {
 
         void onGotExhibitsToShow(Vector<Exhibit> exhibits);
+        void onGotExhibitsData(String title, String creator, String format, String date, String identifier);
+        void onGotSuggestedExhibit(Exhibit e);
     }
     private ServerApiListener listener;
 
@@ -24,9 +26,19 @@ public class ServerApi {
      * @param howManyExhibits number of requested pairs of photos
      * @return vector with pairs
      */
-    public void  getExhibitsToShow(int howManyExhibits) {
+    public void getExhibitsToShow(int howManyExhibits) {
 
         get( "howMany=" + String.valueOf(howManyExhibits));
+    }
+
+    public void getExhibitsData(Exhibit e) {
+
+        get( "options=" + e.getExId());
+    }
+
+    public void getSuggestedExhibit() {
+
+        get("suggestion");
     }
 
     public void postExhibitsRates(Vector<Exhibit> exhibitsWithRates) {

@@ -76,22 +76,45 @@ public class HttpGet implements Runnable {
         }
 
         // Parse result
-        Vector<Exhibit> toReturn = new Vector<>();
-        try {
-            JSONObject jObject = new JSONObject(response.toString());
-            JSONArray jArray = jObject.getJSONArray("exhibitsIds");
 
-            for (int i = 0; i < jArray.length(); i++) {
+        if (this.message.contains("howMany")) {
 
-                JSONObject o = jArray.getJSONObject(i);
-                toReturn.add(new Exhibit(o.getString("id")));
+            Vector<Exhibit> toReturn = new Vector<>();
+            try {
+                JSONObject jObject = new JSONObject(response.toString());
+                JSONArray jArray = jObject.getJSONArray("exhibitsIds");
+
+                for (int i = 0; i < jArray.length(); i++) {
+
+                    JSONObject o = jArray.getJSONObject(i);
+                    toReturn.add(new Exhibit(o.getString("id")));
+                }
+
+                listener.onGotExhibitsToShow(toReturn);
+            } catch (Exception e) {
+
+                listener.onGotExhibitsToShow(toReturn);
             }
+        } else if (this.message.contains("options")) {
 
-            listener.onGotExhibitsToShow(toReturn);
-        } catch (Exception e) {
+            try {
+                JSONObject jObject = new JSONObject(response.toString());
 
-            listener.onGotExhibitsToShow(toReturn);
+                listener.onGotExhibitsData(jObject.getString("title"), jObject.getString("creator"),
+                        jObject.getString("format"), jObject.getString("date"), jObject.getString("identifier"));
+            } catch (Exception e) {
+                Log.e("INFO", "Bad JSON in response");
+            }
+        } else if (this.message.contains("suggestion")) {
+
+            try {
+                JSONObject jObject = new JSONObject(response.toString());
+                listener.onGotSuggestedExhibit(new Exhibit(jObject.getString("id")));
+            } catch (Exception e) {
+
+            }
         }
+
     }
 }
 

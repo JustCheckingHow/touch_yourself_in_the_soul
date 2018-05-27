@@ -24,7 +24,7 @@ class DBInterface:
         return [i[0] for i in cur.fetchall()]
 
     def getPhotoId(self, id):
-        cur = self.conn.execute("SELECT identifier FROM Objects WHERE objectId = "+str(id)+"")
+        cur = self.conn.execute("SELECT identifier FROM Objects WHERE id = "+str(id)+"")
         return [i[0] for i in cur.fetchall()]
 
 class Unpickler:
