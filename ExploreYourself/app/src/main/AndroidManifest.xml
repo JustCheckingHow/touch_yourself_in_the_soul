@@ -18,9 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".tripPropositions"
+            android:label="@string/trip_summary">
 
-        <activity android:name=".tripPropositions"></activity>
-
+        </activity>
     </application>
 
 </manifest>
