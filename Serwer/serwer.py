@@ -38,7 +38,8 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         elif "options" in opts:
             id = opts.split("=")[1]
             options = db.getObject(id)
-            optionsDict = {"title": options[0], "creator": options[1], "format": options[2], "date": options[3], "identifier": options[4]}
+            print(options)
+            optionsDict = {"title": options[0], "creator": options[1], "description": options[2], "format": options[3], "date": options[4], "identifier": options[5]}
             jsonData = json.dumps(optionsDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
@@ -75,8 +76,11 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         categoriesAndRates = {}
 
         for r in rates:
-            id = r["id"]
-            rate = r["rate"]
+            try:
+                id = r["id"]
+                rate = r["rate"]
+            except:
+                continue
 
             # Translate id to category
             style = db.getSubject(id)
