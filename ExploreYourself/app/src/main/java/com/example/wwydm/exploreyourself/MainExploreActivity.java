@@ -166,7 +166,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
 
     @Override
     public void onGotExhibitsData(String title, String creator, String format, String date, String identifier) {
-        3
+
     }
 
     @Override
