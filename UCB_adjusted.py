@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from Serwer.dBinterface import DBInterface
-
+import pickle
 
 class Category:
     def __init__(self):
@@ -14,6 +14,10 @@ class Category:
 class UCB_Assessment:
     def __init__(self, categories_list):
         self.cat_list = categories_list
+        try:
+            self.restore()
+        except IOError as e:
+            print("Restore data not found")
 
     def category_into_assesment(self, user_list):
         """
@@ -67,9 +71,29 @@ class UCB_Assessment:
             else:
                 pass
 
+        ucb.dump()
+
+
     def yield_results(self):
+        result = []
         for category in self.global_categories:
-            print(category.cat_dictionary)
+            maximal = 0
+            best_element = None
+            for element in category.cat_dictionary:
+                print(category.cat_dictionary[element])
+                if category.cat_dictionary[element]["ucb"] > maximal:
+                    best_element = category.cat_dictionary[element]
+                    maximal = category.cat_dictionary[element]["ucb"]
+            result.append([maximal, best_element])
+        return result
+
+    def dump(self):
+        with open("UCB_params.pkl", "wb") as f:
+            pickle.dump(self.global_categories, f)
+
+    def restore(self):
+        with open("UCB_params.pkl", "rb") as f:
+            self.global_categories = pickle.load(f)
 
 if __name__ == "__main__":
     db = DBInterface("Serwer/baza1.db")
@@ -83,4 +107,4 @@ if __name__ == "__main__":
     print(global_cat_list)
     ucb = UCB_Assessment(global_cat_list)
     ucb.run_assessment()
-    ucb.yield_results()
+    print(ucb.yield_results())
