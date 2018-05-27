@@ -70,16 +70,29 @@
 
         </ScrollView>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="139dp"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:rippleColor="@color/colorAccent"
+            app:srcCompat="@android:drawable/ic_menu_info_details"
+            tools:layout_editor_absoluteX="32dp"
+            tools:layout_editor_absoluteY="327dp" />
+
     </android.support.v7.widget.CardView>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="139dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:rippleColor="@color/colorAccent"
-        app:srcCompat="@android:drawable/ic_menu_info_details"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="327dp" />
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:background="@color/colorPrimaryDark"
+        android:visibility="invisible"
+        app:itemBackground="@color/colorPrimary"
+        app:itemIconTint="@color/cardview_light_background"
+        app:itemTextColor="@color/cardview_light_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@layout/navigation_menu" />
 </android.support.constraint.ConstraintLayout>

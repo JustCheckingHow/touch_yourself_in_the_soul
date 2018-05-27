@@ -5,14 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.wwydm.exploreyourself.exhibitOverview.ExhibitDetails;
+import com.example.wwydm.exploreyourself.exhibitOverview.ExhibitsOverview;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +44,26 @@ public class TripPropositions extends AppCompatActivity {
 //        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         //        LinearLayout others = findViewById(R.id.ll_userAdded);
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_item1:
+                                startActivity(new Intent(TripPropositions.this, MainExploreActivity.class));
+                                return true;
+                            case R.id.action_item2:
+                                startActivity(new Intent(TripPropositions.this, ExhibitsOverview.class));
+                                return true;
+                            case R.id.action_item3:
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+        bottomNavigationView.setSelectedItemId(R.id.action_item3);
 
         Random random = new Random();
         for (int i=0; i<3; i++)

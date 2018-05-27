@@ -3,21 +3,27 @@ package com.example.wwydm.exploreyourself;
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.wwydm.exploreyourself.exhibitOverview.ExhibitDetails;
+import com.example.wwydm.exploreyourself.exhibitOverview.ExhibitsOverview;
 import com.example.wwydm.exploreyourself.serverapi.Exhibit;
 import com.example.wwydm.exploreyourself.serverapi.ServerApi;
 
@@ -41,6 +47,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
     private String currExtraTitle;
     private String currExtraCreator;
 
+    private BottomNavigationView bottomNavigationView;
 
     static final int batchMaxCounter = 20;
     @Override
@@ -55,8 +62,25 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                     new String[]{Manifest.permission.INTERNET},
                     2);
         }
-
-
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_item1:
+                                return true;
+                            case R.id.action_item2:
+                                startActivity(new Intent(MainExploreActivity.this, ExhibitsOverview.class));
+                                return true;
+                            case R.id.action_item3:
+                                startActivity(new Intent(MainExploreActivity.this, TripPropositions.class));
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+        bottomNavigationView.setSelectedItemId(R.id.action_item1);
+        
         FloatingActionButton myFab = findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -89,7 +113,6 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         batchGuard(Exhibit.Choice.LIKE);
         animateOut();
         new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
-        enableAllButtons();
     }
 
     public void onButtonNotLike(View v) {
@@ -97,7 +120,6 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         batchGuard(Exhibit.Choice.DISLIKE);
         animateOut();
         new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
-        enableAllButtons();
     }
 
     public void onButtonNotDecided(View v) {
@@ -105,7 +127,6 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         batchGuard(Exhibit.Choice.NONE);
         animateOut();
         new BitmapDownloader().execute(toShow.get(currentID).getImageUrl());
-        enableAllButtons();
     }
 
     private void disableAllButtons(){
@@ -131,6 +152,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                     "Exceeded batch number...Sending to https server", Toast.LENGTH_LONG).show();
             sa.postExhibitsRates(toShow);
             currentID = 0;
+            bottomNavigationView.setVisibility(View.VISIBLE);
         }
         Log.e("APP INF", String.valueOf(currentID));
     }
@@ -242,6 +264,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
         protected void onPostExecute(Object result) {
             animateIn();
             iv_MainPhoto.setImageBitmap((Bitmap)result);
+            enableAllButtons();
         }
     }
 }
