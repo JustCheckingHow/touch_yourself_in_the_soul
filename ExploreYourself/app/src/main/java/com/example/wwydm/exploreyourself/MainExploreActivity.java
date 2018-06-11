@@ -62,6 +62,7 @@ public class MainExploreActivity extends AppCompatActivity implements ServerApi.
                     new String[]{Manifest.permission.INTERNET},
                     2);
         }
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override

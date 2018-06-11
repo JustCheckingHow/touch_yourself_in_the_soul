@@ -23,6 +23,7 @@ public class HttpPost implements Runnable {
     protected StringBuffer response;
     private String message;
     private String serverAddress;
+    private String port="2137";
 
     public HttpPost(String serverAddress, String message)
     {
@@ -37,7 +38,7 @@ public class HttpPost implements Runnable {
             url = new URL("http://"
                     + this.serverAddress
                     + ":"
-                    + "80");
+                    + this.port);
 //                     + //Globals.getServerApiDestination());
         }catch(MalformedURLException ex) {
             Log.e("Http:", "new URL:", ex);

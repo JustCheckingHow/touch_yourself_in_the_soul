@@ -25,6 +25,7 @@ public class HttpGet implements Runnable {
     private String message;
     private ServerApi.ServerApiListener listener;
     private String serverAddress;
+    private String port="2137";
 
     public HttpGet(String serverAddress, String message, ServerApi.ServerApiListener listener)
     {
@@ -40,7 +41,8 @@ public class HttpGet implements Runnable {
             url = new URL("http://"
                     + this.serverAddress
                     + ":"
-                    + "80?" + this.message);
+                    + this.port
+                    + "?" + this.message);
 //                     + //Globals.getServerApiDestination());
         }catch(MalformedURLException ex) {
             Log.e("Http:", "new URL:", ex);
