@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,7 +27,7 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class TripPropositions extends AppCompatActivity {
+public class tripPropositions extends AppCompatActivity {
     LinearLayout imagesList;
     LayoutInflater inflater;
     private BottomSheetBehavior mBottomSheetBehavior;
@@ -52,10 +53,10 @@ public class TripPropositions extends AppCompatActivity {
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_item1:
-                                startActivity(new Intent(TripPropositions.this, MainExploreActivity.class));
+                                startActivity(new Intent(tripPropositions.this, MainExploreActivity.class));
                                 return true;
                             case R.id.action_item2:
-                                startActivity(new Intent(TripPropositions.this, ExhibitsOverview.class));
+                                startActivity(new Intent(tripPropositions.this, ExhibitsOverview.class));
                                 return true;
                             case R.id.action_item3:
                                 return true;
@@ -86,11 +87,14 @@ public class TripPropositions extends AppCompatActivity {
         new exhibitAdder().execute(url, v);
     }
 
-    private  void showBottomScrollView(){
+    private void showBottomScrollView(){
         BottomScrollView bsv = new BottomScrollView();
         bsv.show(getSupportFragmentManager(), "Bottom sheet");
     }
 
+    public void showRouteMenu(View view){
+        startActivity(new Intent(tripPropositions.this, NavigationUtility.class));
+    }
     private class exhibitAdder extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {

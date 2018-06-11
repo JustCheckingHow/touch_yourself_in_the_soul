@@ -26,6 +26,11 @@ import java.util.ArrayList;
 public class ExhibitsOverviewAdapter extends RecyclerView.Adapter<ExhibitsOverviewAdapter.cardedImageHolder> {
     private Context context;
     private ArrayList<Bitmap> image_to_set;
+    private String[] suggestionURLs;
+
+    public void setSuggestionURLS(String[] givenURLs){
+        this.suggestionURLs = givenURLs;
+    }
 
     public class cardedImageHolder extends RecyclerView.ViewHolder {
 
@@ -37,18 +42,21 @@ public class ExhibitsOverviewAdapter extends RecyclerView.Adapter<ExhibitsOvervi
         }
     }
 
-    ExhibitsOverviewAdapter(Context context) {
+    ExhibitsOverviewAdapter(Context context, String[] suggestionURLs) {
         image_to_set = new ArrayList();
-
+        String [] URLs = new String[3];
         this.context = context;
-//        this.image_to_set = BitmapFactory.decodeFile("/storage/emulated/0/DCIM/Facebook/FB_IMG_1527169943950.jpg");
-        String[] URLs = new String[3];
-        URLs[0] = "https://uploads3.wikiart.org/images/leon-arthur-tutundjian/la-boule-noire-1926.jpg";
-        URLs[1] = "https://uploads1.wikiart.org/images/arshile-gorky/the-raven-composition-no-3.jpg";
-        URLs[2] = "https://uploads6.wikiart.org/images/arshile-gorky/blue-figure-in-a-chair.jpg";
-
-        for(String u: URLs) {
-            new BitmapDownloader().execute(u);
+        if (suggestionURLs == null){
+            URLs[0] = "https://uploads3.wikiart.org/images/leon-arthur-tutundjian/la-boule-noire-1926.jpg";
+            URLs[1] = "https://uploads1.wikiart.org/images/arshile-gorky/the-raven-composition-no-3.jpg";
+            URLs[2] = "https://uploads6.wikiart.org/images/arshile-gorky/blue-figure-in-a-chair.jpg";
+            for(String u: URLs) {
+                new BitmapDownloader().execute(u);
+            }
+        }else{
+            for(String u: suggestionURLs) {
+                new BitmapDownloader().execute(u);
+            }
         }
     }
 

@@ -114,11 +114,21 @@ public class HttpGet implements Runnable {
             }
         } else if (this.message.contains("suggestion")) {
 
+            Vector<Exhibit> toReturn = new Vector<>();
             try {
                 JSONObject jObject = new JSONObject(response.toString());
-                listener.onGotSuggestedExhibit(new Exhibit(jObject.getString("id")));
+                JSONArray jArray = jObject.getJSONArray("exhibitsIds");
+
+                for (int i = 0; i < jArray.length(); i++) {
+
+                    JSONObject o = jArray.getJSONObject(i);
+                    toReturn.add(new Exhibit(o.getString("id")));
+                }
+
+                listener.onGotSuggestedExhibit(toReturn);
             } catch (Exception e) {
 
+                listener.onGotSuggestedExhibit(toReturn);
             }
         }
 

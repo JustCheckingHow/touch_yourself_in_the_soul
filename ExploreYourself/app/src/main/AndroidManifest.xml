@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TripPropositions"
+        <activity android:name=".tripPropositions"
             android:label="@string/trip_summary">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,6 +34,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".exhibitOverview.ExhibitDetails" />
+        <activity android:name=".NavigationUtility" />
+
     </application>
 
 </manifest>

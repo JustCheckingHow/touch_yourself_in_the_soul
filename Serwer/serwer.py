@@ -12,6 +12,7 @@ sys.path.append("..")
 from UCB_Server_Interface import UCBInterface
 
 interface = UCBInterface()
+#interface = TestAiInterface()
 
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
@@ -21,19 +22,22 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
         self.send_header('Content-type','application/json')
         self.end_headers()
-
-        db = DBInterface()
-
+        
         opts = self.path[2:]
         print(opts)
 
         if "howMany" in opts:
             jsonIds = []
             howMany = int(opts.split("=")[1])
+            
+            db = DBInterface()
             for id in interface.onExhibitsRequested(howMany):
                 imgId = db.getPhotoId(id)
+                if imgId == []:
+                    continue
                 jsonIds.append({"id": str(id) + "/" + imgId[0]})
-
+            db.close()
+            
             jsonMsg = {}
             jsonMsg["exhibitsIds"] = jsonIds
             jsonData = json.dumps(jsonMsg)
@@ -41,20 +45,30 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
             print("GET after message write")
         elif "options" in opts:
             id = opts.split("=")[1]
+            db = DBInterface()
             options = db.getObject(id)
+            db.close()
             print(options)
             optionsDict = {"title": options[0], "creator": options[1], "description": options[2], "format": options[3], "date": options[4], "identifier": options[5]}
             jsonData = json.dumps(optionsDict)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
         elif "suggestion" in opts:
-            idDict = {}
+            jsonIds = []
+            howMany = int(opts.split("=")[1])
             
-            id = interface.getSuggestedId()
-            imgId = str(db.getPhotoId(id))
-            idDict["id"] = id + "/" + imgId[0]
+            db = DBInterface()
+            for id in interface.getSuggestedId(howMany):
+                print(id)
+                imgId = db.getPhotoId(id)
+                print(imgId)
+                print(imgId[0])
+                jsonIds.append({"id": str(id) + "/" + imgId[0]})
+            db.close()
             
-            jsonData = json.dumps(idDict)
+            jsonMsg = {}
+            jsonMsg["exhibitsIds"] = jsonIds
+            jsonData = json.dumps(jsonMsg)
             self.wfile.write(bytes(jsonData, "utf8"))
             print("GET after message write")
 
@@ -67,16 +81,10 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type','application/json')
         self.end_headers()
 
-        # Make object connector
-        db = DBInterface()
-
         jsonString = urllib.parse.unquote(str(self.rfile.read(int(self.headers['Content-Length']))))[2:-1]
-
-        print("POST: " + jsonString)
 
         ratesJson = json.loads(jsonString)
         rates = ratesJson["rates"]
-        print("POST done json object")
 
         categoriesAndRates = {}
 
@@ -88,10 +96,13 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 continue
 
             # Translate id to category
+            db = DBInterface()
             style = db.getSubject(id)
             genre = db.getType(id)
+            db.close()
             categoriesAndRates[id] = [style, genre, self.rateToNumber(rate)]
-
+            #print(categoriesAndRates[id])
+            
         interface.onExhibitsRates(categoriesAndRates)
 
         return
