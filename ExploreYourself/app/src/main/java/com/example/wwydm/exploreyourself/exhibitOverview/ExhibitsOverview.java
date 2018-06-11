@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wwydm.exploreyourself.JsonParser;
 import com.example.wwydm.exploreyourself.MainExploreActivity;
 import com.example.wwydm.exploreyourself.R;
 import com.example.wwydm.exploreyourself.serverapi.ServerApi;
@@ -102,7 +104,26 @@ public class ExhibitsOverview extends AppCompatActivity implements ServerApi.Ser
 
     @Override
     public void onGotExhibitsData(String[] data) {
+        String currExtraCreator = data[1];
+        String currExtraTitle = data[0];
 
+        String infoStringQuery = currExtraTitle;
+        if (currExtraTitle == null){
+            if (currExtraCreator == null){
+                Log.d("APP INFO", "NULL AUTHOR");
+                return;
+            }
+            else {
+                infoStringQuery = currExtraCreator;
+            }
+        }
+        else {
+            Log.d("APP INFO", currExtraTitle);
+        }
+        Log.d("APP INFO", infoStringQuery);
+
+        pd.dismiss();
+        new JsonParser().execute(infoStringQuery, findViewById(R.id.tv_description));
     }
 
     @Override

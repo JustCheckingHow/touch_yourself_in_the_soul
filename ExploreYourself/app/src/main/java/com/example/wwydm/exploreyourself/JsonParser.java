@@ -1,9 +1,11 @@
 package com.example.wwydm.exploreyourself;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 
 import org.json.JSONException;
@@ -80,15 +82,21 @@ public class JsonParser extends AsyncTask<Object, Void, ArrayList<Object>>
                 try{
                     JSONObject tj = (JSONObject) r;
                     extract = tj.getString("extract");
-
                 }
                 catch (ClassCastException e){
                     extract =(String) r;
                 }
                 Log.e("APP", extract);
                 Object build = response.get(1);
-                android.support.v7.app.AlertDialog.Builder ab = (android.support.v7.app.AlertDialog.Builder) build;
-                ((android.support.v7.app.AlertDialog.Builder) ab).setMessage(extract).show();
+                try{
+                    android.support.v7.app.AlertDialog.Builder ab = (android.support.v7.app.AlertDialog.Builder) build;
+                    ((android.support.v7.app.AlertDialog.Builder) ab).setMessage(extract).show();
+                }
+                catch (ClassCastException e){
+                    TextView a = (TextView) build;
+                    a.setText(extract);
+                }
+
             } catch (JSONException ex) {
                 Log.e("App", "Failure", ex);
             }
